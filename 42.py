@@ -53,7 +53,7 @@ class Solution2(object):
         return res
 
 class Solution(object):
-    "单调栈"
+    "求出最高点，然后依次向左遍历，向右遍历"
     def trap(self, height):
         """
         :type height: List[int]
