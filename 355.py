@@ -19,10 +19,11 @@ class Twitter:
         """
         Compose a new tweet.
         """
+        self.time+=1
         if userId in self.twit.keys():
-            self.twit[userId].append((tweetId,time.time()))
+            self.twit[userId].append((tweetId,self.time))
         else:
-            self.twit[userId]=[(tweetId,time.time())]
+            self.twit[userId]=[(tweetId,self.time)]
 
 
     def getNewsFeed(self, userId):
