@@ -30,28 +30,40 @@ class Twitter:
         """
         Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent.
         """
-
-
+        wholelst=[]
+        if userId in self.user:
+            for i in self.user[userId]:
+                if i in self.twit:
+                    if len(self.twit[i])<=10:
+                        wholelst.extend(self.twit[i])
+                    else:
+                        wholelst.extend(self.twit[i][0:10])
+        if userId in self.twit:
+            if len(self.twit[userId])<=10:
+                wholelst.extend(self.twit[userId])
+            else:
+                wholelst.extend(self.twit[userId][0:10])
+        wholelst=sorted(wholelst,key=lambda x:x[1],reverse=True)
+        return [wholelst[i][0] for i in range(0,min(len(wholelst),10))]
 
 
     def follow(self, followerId, followeeId):
         """
         Follower follows a followee. If the operation is invalid, it should be a no-op.
         """
-        if followerId in self.user.keys():
-            self.twit[followerId].append(followeeId)
-        else:
-            self.twit[followerId]=[(followeeId)]
+        if followerId!=followeeId:
+            if followerId in self.user.keys() and followeeId not in self.user[followerId]:
+                self.user[followerId].append(followeeId)
+            else:
+                self.user[followerId]=[(followeeId)]
 
 
     def unfollow(self, followerId, followeeId):
         """
         Follower unfollows a followee. If the operation is invalid, it should be a no-op.
         """
-        if followerId in self.user.keys() and followeeId in self.twit[followerId]:
-            self.twit[followerId].remove(followeeId)
-        else:
-            return
+        if followerId in self.user.keys() and followeeId in self.user[followerId]:
+            self.user[followerId].remove(followeeId)
 
 
 
@@ -62,6 +74,8 @@ if __name__=="__main__":
     param_2 = obj.getNewsFeed(1)
     obj.follow(1,2)
     obj.postTweet(2,6)
+    obj.postTweet(2,2)
+    obj.postTweet(2,4)
     param_2 = obj.getNewsFeed(1)
     obj.unfollow(1,2)
     param_2 = obj.getNewsFeed(1)
