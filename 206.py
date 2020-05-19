@@ -4,7 +4,7 @@ Created on Mon May 11 23:32:09 2020
 
 @author: AlvinChen
 """
-class Solution:
+class Solution1:
     def reverseList(self, head):
         """
         input type: ListNode
@@ -21,6 +21,18 @@ class Solution:
             pre.next=ListNode(lst.pop())
             pre=pre.next
         return root.next
+
+class Solution:
+    def reverseList(self, head):
+        """
+        input type: ListNode
+        output type: ListNode
+        """
+        if not head or not head.next:
+            return head
+        Nextnode=self.reverseList(head.next)
+        head.next.next,head.next=head,None
+        return Nextnode
 
 if __name__=="__main__":
     try:
