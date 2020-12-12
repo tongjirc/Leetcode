@@ -1,9 +1,4 @@
-﻿# CMakeList.txt: CMakeProject1 的 CMake 项目，在此处包括源代码并定义
-# 项目特定的逻辑。
-#
-cmake_minimum_required (VERSION 3.8)
-
-
+﻿cmake_minimum_required (VERSION 3.8)
 
 #--------------------------------------------                                   
 # Preprocess                                                            
@@ -22,15 +17,16 @@ cmake_minimum_required (VERSION 3.8)
 #INCLUDE(cmake/messagecolor.cmake)
 
 #项目名称 如果混合编程需要添加CXX C并打开CXX C COMPLIER
-PROJECT("CMakeProject1" VERSION ${RSU_SDK_VERSION})
+PROJECT("CMakeProject1" )
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall -Wno-unused-variable -pthread -lstdc++")  #设置c++的编译选项
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ")  #设置c的编译选项
 SET(CMAKE_TOOLCHAIN_FILE "/home/$ENV{USER}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-SET(CMAKE_SYSTEM_NAME WSL)
+SET(CMAKE_SYSTEM_NAME Linux)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall -pthread -lstdc++")  #设置c++的编译选项
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ")  #设置c的编译选项
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_TOOLCHAIN_FILE "C:/Users/nxyct/Documents/Visual Studio 2019/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ELSE ()
