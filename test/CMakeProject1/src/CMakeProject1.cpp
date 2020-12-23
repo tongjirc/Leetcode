@@ -1,4 +1,12 @@
 ﻿#include "CMakeProject1.h"
+
+//C++ Lib
+#include <iostream>
+#include <algorithm>
+#include <set>
+
+//C Lib
+#include <string.h>
 using namespace std;
 
 extern "C" {
@@ -12,63 +20,78 @@ typedef struct VehicleSize {
 
 class Solution {
 public:
-  vector<int> twoSum(vector<int> &nums, int target) {
-    printf("输入数组大小为%d\n", nums.size());
-
-    vector<int> so;
-    for (int i = 0; i < nums.size(); i++) {
-      for (int j = i + 1; j < nums.size(); j++) {
-        if (nums[i] + nums[j] == target) {
-          so.push_back(i);
-          so.push_back(j);
-          return so;
-        }
+  bool wordPattern(string pattern, string str) {
+    unordered_map<string, char> str2ch;
+    unordered_map<char, string> ch2str;
+    int m = str.length();
+    int i = 0;
+    for (auto ch : pattern) {
+      if (i >= m) {
+        return false;
       }
+      int j = i;
+      while (j < m && str[j] != ' ')
+        j++;
+      const string &tmp = str.substr(i, j - i); //作为引用，减少内存消耗
+      if (str2ch.count(tmp) && str2ch[tmp] != ch) {
+        return false;
+      }
+      if (ch2str.count(ch) && ch2str[ch] != tmp) {
+        return false;
+      }
+      str2ch[tmp] = ch;
+      ch2str[ch] = tmp;
+      i = j + 1;
     }
-    return so;
+    return i >= m;
   }
-
-  vector<int> twoSum(vector<int> &nums, int target) {
-    unordered_map<int, int> hashtable;
-    for (int i = 0; i < nums.size(); ++i) {
-      auto it = hashtable.find(target - nums[i]);
-      if (it != hashtable.end()) {
-        return {it->second, i};
+  char findTheDifference(string s, string t) {
+      char exor = 0;
+      for (char c : s + t) {
+          exor ^= c;
       }
-      hashtable[nums[i]] = i;
-    }
-    return {};
+      return exor;
+  }
+  int firstUniqChar(string s) {
+      //for (int i = 0; i < s.length(); i++) {
+      //    if (s.rfind(s[i],s.length()) == s.find(s[i])) 
+      //        return i;
+      //}
   }
 };
 
 int main() {
+    try {
+        // test ptr
+        unique_ptr<VehicleSize_t> vs = unique_ptr<VehicleSize_t>(new VehicleSize_t);
 
-  // test ptr
-  unique_ptr<VehicleSize_t> vs = unique_ptr<VehicleSize_t>(new VehicleSize_t);
+        VehicleSize_t* vs1 = new VehicleSize_t();
+        vs->width = 100;
+        vs->length = 100;
+        vs->height = new long(100);
+        delete vs1;
 
-  VehicleSize_t *vs1 = new VehicleSize_t();
-  vs->width = 100;
-  vs->length = 100;
-  vs->height = new long(100);
-  delete vs1;
+        // int* p=nullptr;
+        // p = (int*)malloc(sizeof(int));
+        // *p = 1;
 
-  // int* p=nullptr;
-  // p = (int*)malloc(sizeof(int));
-  // *p = 1;
+        // if (p == NULL)cout << "p si null" << endl;
+        // if (*p == 0)cout << "p is 0" << endl;
+        // delete p;
+        // p = NULL;
 
-  // if (p == NULL)cout << "p si null" << endl;
-  // if (*p == 0)cout << "p is 0" << endl;
-  // delete p;
-  // p = NULL;
-
-  // test solution
-  Solution so;
-  std::vector<int> nums({-1, -2, -3, -4, -5});
-  std::vector<int> result = so.twoSum(nums, -8);
-  printf("返回数据大小为%d\n", result.size());
-  if (result.size())
-    printf("返回数据为%d,%d\n", result[0], result[1]);
-
+        // test solution
+        Solution so;
+        string s = "yekbsxznylrwamcaugrqrurvpqybkpfzwbqiysrdnrsnbftvrnszfjbkbmrctjizkjqoxqzddyfnavnhqeblfmzqgsjflghaulbadwqsyuetdelujphmlgtmkoaoijypvcajctbaumeromgejtewbwqptotrorephegyobbstvywljboeihdliknluqdpgampjyjpinxhhqexoctysfdciqjbzilnodzoihihusxluqoayenluziobxiodrfdkinkzzozmxfezfvllpdvogqqtquwcsijwachefspywdgsohqtlquhnoecccgbkrzqcprzmwvygqwddnehhi";
+        s = "cc";
+        int result = so.firstUniqChar(s);
+        cout << result << endl;
+        cout << endl;
+    }
+    catch (exception e)
+    {
+        cout << e.what();
+    }
 #ifdef _MSC_VER
   _CrtDumpMemoryLeaks();
 #endif
