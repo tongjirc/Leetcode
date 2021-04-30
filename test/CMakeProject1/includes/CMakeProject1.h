@@ -17,7 +17,6 @@
 
 #include <stdlib.h>
 #include <unordered_map>
-#include <hash_map>
 #include <hash_set>
 #include <map>
 #include <memory>

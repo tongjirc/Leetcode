@@ -25,8 +25,8 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ")  #设置c的编译选项
 SET(CMAKE_TOOLCHAIN_FILE "/home/$ENV{USER}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 SET(CMAKE_SYSTEM_NAME Linux)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall -pthread -lstdc++")  #设置c++的编译选项
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ")  #设置c的编译选项
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall -pthread -lstdc++")  #设置c++的编译选项
+#SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 ")  #设置c的编译选项
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_TOOLCHAIN_FILE "C:/Users/nxyct/Documents/Visual Studio 2019/vcpkg/scripts/buildsystems/vcpkg.cmake")
 ELSE ()
