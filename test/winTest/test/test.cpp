@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <numeric>
 
 //C Lib
 #include <math.h>
@@ -207,6 +208,27 @@ public:
         return hashMap.begin()->first;
     }
 
+    int leastBricks(std::vector<std::vector<int>>& wall) {
+        if (!wall.size() || !wall[0].size())return 0;
+        int m = wall.size();
+        std::unordered_map<int,int> hashSet;
+        for (int i = 0; i < m; i++) {
+            int sLine = 0;
+            hashSet[sLine] += 1;
+            for (auto j : wall[i]) {
+                sLine += j;
+                hashSet[sLine] += 1;
+            }
+        }
+        int maxs = 0;
+        int maxk = std::accumulate(wall[0].begin(), wall[0].end(),0);
+        for (auto i = hashSet.begin(); i != hashSet.end(); i++) {
+            if (i->first != 0 && i->first != maxk && i->second > maxs)maxs = i->second;
+        }
+        
+    return m - maxs;
+    }
+
 };
 
 struct Test {
@@ -230,8 +252,8 @@ int main() {
         // vector<int> nums = { 1,3,2,4,5,6,7,8,9,10 };
 
         //cout << so.find132pattern(nums) << endl;
-        std::vector<int> lst = { 1,1,2,2,2,1,3 };
-        auto result = so.singleNumber(lst);
+        std::vector<std::vector<int>> lst = { {1,2,2,1},{3,1,2},{1,3,2},{2,4},{3,1,2},{1,3,1,1} };
+        auto result = so.leastBricks(lst);
         std::cout << std::endl;
     }
     catch (std::exception e)
