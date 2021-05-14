@@ -228,7 +228,34 @@ public:
         
     return m - maxs;
     }
-
+    std::string intToRoman(int num) {
+        const std::pair<int, std::string> valueSymbols[] = {
+    {1000, "M"},
+    {900,  "CM"},
+    {500,  "D"},
+    {400,  "CD"},
+    {100,  "C"},
+    {90,   "XC"},
+    {50,   "L"},
+    {40,   "XL"},
+    {10,   "X"},
+    {9,    "IX"},
+    {5,    "V"},
+    {4,    "IV"},
+    {1,    "I"},
+        };
+        std::string roman;
+        for (auto [value, symbol] : valueSymbols) {
+            while (num >= value) {
+                num -= value;
+                roman += symbol;
+            }
+            if (num == 0) {
+                break;
+            }
+        }
+        return roman;
+    }
 };
 
 struct Test {
@@ -240,6 +267,7 @@ std::ostream& operator<<(std::ostream& out, const Test& t) {
     out << t.a << ' ' << t.b << std::endl;
     return out;
 }
+
 
 int main() {
     try {
@@ -253,7 +281,34 @@ int main() {
 
         //cout << so.find132pattern(nums) << endl;
         std::vector<std::vector<int>> lst = { {1,2,2,1},{3,1,2},{1,3,2},{2,4},{3,1,2},{1,3,1,1} };
-        auto result = so.leastBricks(lst);
+        std::vector<int> test = { 1,2,2,4,4,6 };
+        const std::pair<int,std::string> valueSymbols[] = {
+    {1000, "M"},
+    {900,  "CM"},
+    {500,  "D"},
+    {400,  "CD"},
+    {100,  "C"},
+    {90,   "XC"},
+    {50,   "L"},
+    {40,   "XL"},
+    {10,   "X"},
+    {9,    "IX"},
+    {5,    "V"},
+    {4,    "IV"},
+    {1,    "I"},
+        };
+        std::string roman;
+        int num = 1994;
+        for (auto [value, symbol] : valueSymbols) {
+            while (num >= value) {
+                num -= value;
+                roman += symbol;
+            }
+            if (num == 0) {
+                break;
+            }
+        }
+
         std::cout << std::endl;
     }
     catch (std::exception e)
