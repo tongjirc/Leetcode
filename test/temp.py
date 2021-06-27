@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import geojson as geo
 from scipy import interpolate
 
-        
+
 def Lst2ListNode(Lst):
     dummy=ListNode(-1,None)
     rcd=dummy
@@ -33,7 +33,7 @@ def Lst2ListNode(Lst):
         nd=ListNode(i,None)
         dummy.next=nd
         dummy=dummy.next
-    return  rcd.next
+    return rcd.next
 
 def ListNode2Lst(node):
     Lst=[]
@@ -48,7 +48,7 @@ class SingleTon(object):
         if not hasattr(cls,"_instance"):
             cls._instance=object.__new__(cls,*args,**kwargs)
         return cls._instance
-    
+
 class ListNode(object):
     _name="ListNode"
     def __init__(self,val=0,next=None,lst=[]):
@@ -61,7 +61,7 @@ class ListNode(object):
             else:self.next=None
     def __str__(self):
         return  str(ListNode2Lst(self))
-    
+
 
 class Solution:
     def sortList(self, head: ListNode) -> ListNode:
@@ -82,7 +82,7 @@ class Solution:
             else:
                 l1.next=Merge(l1.next,l2)
                 return l1
-        
+
         def Split(node):
             slow,fast=node,node
             dummy=slow
@@ -93,7 +93,7 @@ class Solution:
                 right=slow.next
                 slow.next=None
             return [dummy,right]
-            
+
         return MergeSort(head)
 
     def rotateRight(self, head: ListNode, k: int) -> ListNode:
@@ -111,10 +111,10 @@ class Solution:
                 now.next=None
                 return [0,newhead]
             else:return [depth,maybeEnd]
-        
+
         depth,maybeEnd=rotateLst(head,head,1)
         return maybeEnd
-    
+
     def leastBricks(self, wall):
         if not wall or not wall[0]:return 0
         m=len(wall)
@@ -130,7 +130,7 @@ class Solution:
             if i[0]!=0 and i[0]!=maxk and i[1]>maxs:
                 maxs=i[1]
         return m-maxs
-    
+
     def cuttingRope(self, n):
         if n>3:
             if n%3==0:return 3**(n//3)
@@ -138,9 +138,9 @@ class Solution:
             else: return 3**(n//3)*2
         else:
             return 1*(n-1)
-        
+
     def leafSimilar(self, root1, root2):
-        
+
         def dfsLst(root):
             dfsLst1,lst1=[root],[]
             while dfsLst1:
@@ -186,13 +186,133 @@ class Solution:
                     num-=i
                     break
         return s
-        
 
-arr = [4,8,2,10]
-queries = [[2,3],[1,3],[0,0],[0,3]]
+    def kthLargestValue(self, matrix, k):
+        maxk=[]
+
+        def addK(s):
+            lenMaxk=len(maxk)
+            if lenMaxk==k and s>maxk[-1]:maxk.pop()
+            elif lenMaxk==k and s<=maxk[-1]:return
+            maxk.append(s)
+            for i in range(lenMaxk-2,-1,-1):
+                if maxk[i]<maxk[i+1]:maxk[i],maxk[i+1]=maxk[i+1],maxk[i]
+                else:break
+            return
+
+        m,n=len(matrix),len(matrix[0])
+        for i in range(m):
+            for j in range(n):
+                s=matrix[i][j]
+                if i-1>=0:s^=matrix[i-1][j]
+                if j-1>=0:s^=matrix[i][j-1]
+                if i-1>=0 and j-1>=0:s^matrix[i-1][j-1]
+                matrix[i][j]=s
+                addK(s)
+        return maxk[k-1]
+
+    def peakIndexInMountainArray(self, arr):
+        n = len(arr)
+        left, right, ans = 1, n - 2, 0
+
+        while left <= right:
+            mid = (left + right) // 2
+            if arr[mid] > arr[mid + 1]:
+                ans = mid
+                right = mid - 1
+            else:
+                left = mid + 1
+
+        return ans
+
+    def openLock(self, deadends, target):
+        searchingLst=[["0000",0]]
+        searchedLst=set()
+        deadends=set(deadends)
+        if "0000" in deadends:return -1
+        while searchingLst:
+            point,depth=searchingLst.pop(0)
+            if point==target:return depth
+            if point in searchedLst:continue
+            searchedLst.add(point)
+            for x,y,z,w in [[1,0,0,0],[-1,0,0,0],[0,1,0,0],[0,-1,0,0],[0,0,1,0],[0,0,-1,0],[0,0,0,1],[0,0,0,-1]]:
+                newPoint=str((int(point[0])+x)%10)+str((int(point[1])+y)%10)+str((int(point[2])+z)%10)+str((int(point[3])+w)%10)
+                if newPoint in searchedLst or newPoint in deadends :continue
+                else:
+                    searchingLst.append([newPoint,depth+1])
+                    for i in range(len(searchingLst)-1,0,-1):
+                        if searchingLst[i][1]<searchingLst[i-1][1]:
+                            searchingLst[i],searchingLst[i-1]=searchingLst[i-1],searchingLst[i]
+                        else:
+                            break
+        return -1
+    def isNumber(self, s):
+        #None
+        s=s.strip(" ")
+        if not s:return False
+
+        #Int
+        def isInt(s):
+            if s[0]=="+" or s[0]=="-":s=s[1:]
+            if not s:return False
+            for i in s:
+                if not "0"<=i<="9":return False
+            return True
+
+        #Double
+        def isDouble(s):
+            if s[0]=="+" or s[0]=="-":s=s[1:]
+            intLst=s.split('.')
+            if len(intLst)>2:return False
+            numCount=0
+            for i in intLst:
+                if not i:continue
+                if not "0"<=i[0]<="9" or not isInt(i):return False
+                numCount+=1
+            return True if numCount>=1 else False
+
+        #E or e
+        def isE(s):
+            numLst=[]
+            if "e" in s:numLst=s.split('e')
+            elif "E" in s:numLst=s.split('E')
+            else:return False
+            if len(numLst)!=2:return False
+            for i in numLst:
+                if not i:return False
+            if not isDouble(numLst[0]) and not isInt(numLst[0]):return False
+            if not isInt(numLst[1]):return False
+            return True
+
+        return isInt(s) or isDouble(s) or isE(s)
+
+
+deadends = ["0000"]
+target="8888"
 so=Solution()
+print(so.openLock(deadends,target))
 
-print(so.xorQueries(arr,queries))
-#输出：[8,0,4,4]
-#wall=[[1,2,2,1],[3,1,2],[1,3,2],[2,4],[3,1,2],[1,3,1,1]]
-
+#示例 1：
+#
+#输入：arr = [0,1,0]
+#输出：1
+#示例 2：
+#
+#输入：arr = [0,2,1,0]
+#输出：1
+#示例 3：
+#
+#输入：arr = [0,10,5,2]
+#输出：1
+#示例 4：
+#
+#输入：arr = [3,4,5,1]
+#输出：2
+#示例 5：
+#
+#输入：arr = [24,69,100,99,79,78,67,36,26,19]
+#输出：2
+#
+#来源：力扣（LeetCode）
+#链接：https://leetcode-cn.com/problems/peak-index-in-a-mountain-array
+#著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。

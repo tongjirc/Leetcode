@@ -269,6 +269,17 @@ std::ostream& operator<<(std::ostream& out, const Test& t) {
     return out;
 }
 
+int CheckByte(char* data, int start, int end) {
+    if (end >= start) {
+        char charGen = data[start];
+        for (int i = start + 1; i < end; i++) {
+            charGen ^= data[i];
+        }
+        return charGen;
+    }
+    return -1;
+}
+
 
 int main() {
     try {
@@ -287,11 +298,9 @@ int main() {
         int8_t b(a);
         std::cout << b;
 
-        char description[4] = { 0 };
-        for (auto i : description) {
-            printf("%d",i);
-        }
-
+        char description[5] = { 0xAA,0x55,0x01,0x06,0x13};
+        auto byte = CheckByte(description, 0, 5);
+        auto x0 = char(byte)==char(0xEB);
         std::cout << std::endl;
     }
     catch (std::exception e)
