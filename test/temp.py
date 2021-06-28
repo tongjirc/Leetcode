@@ -26,6 +26,11 @@ import geojson as geo
 from scipy import interpolate
 
 
+class RouteTree:
+    def __init__(self,val):
+        self.val=val
+        self.trans=[]
+
 def Lst2ListNode(Lst):
     dummy=ListNode(-1,None)
     rcd=dummy
@@ -285,12 +290,47 @@ class Solution:
             return True
 
         return isInt(s) or isDouble(s) or isE(s)
+    def numBusesToDestination(self, routes, source, target):
+        """
+        :type routes: List[List[int]]
+        :type source: int
+        :type target: int
+        :rtype: int
+        """
+        numPub=len(routes)
+        sourceRoute=[i for i in range(numPub) if source in routes[i]]
+        targetRoute=[i for i in range(numPub) if target in routes[i]]
+        routeLst=[RouteTree(i) for i in range(numPub)]
+        for route in routeLst:
+            for pt in routes[route.val]:
+                for routeNum in range(numPub):
+                    if routeNum==route.val:continue
+                    if pt in routes[routeNum]:route.trans.append(routeNum)
+
+        def FindMinPath(sPt,tPt,mindepth):
+            foundLst=[0]*numPub
+            bfsLst=[[routeLst[sPt],1]]
+            while bfsLst:
+                nd,depth=bfsLst.pop(0)
+                if depth>numPub or depth>mindepth:return float("inf")
+                if nd.val==tPt:return depth
+                for r in nd.trans:
+                    if foundLst[r]==1:continue
+                    bfsLst.append([routeLst[r],depth+1])
+
+        minPub=float("inf")
+        for sourcePt in sourceRoute:
+            for targetPt in targetRoute:
+                n=FindMinPath(sourcePt,targetPt,minPub)
+                minPub=min(minPub,n)
+        return minPub if minPub!=float("inf") else -1
 
 
-deadends = ["0000"]
-target="8888"
+routes = [[25,33],[3,5,13,22,23,29,37,45,49],[15,16,41,47],[5,11,17,23,33],[10,11,12,29,30,39,45],[2,5,23,24,33],[1,2,9,19,20,21,23,32,34,44],[7,18,23,24],[1,2,7,27,36,44],[7,14,33]]
+source=7
+target=47
 so=Solution()
-print(so.openLock(deadends,target))
+print(so.numBusesToDestination(routes,source,target))
 
 #示例 1：
 #
