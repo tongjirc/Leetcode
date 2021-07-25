@@ -67,6 +67,11 @@ class ListNode(object):
     def __str__(self):
         return  str(ListNode2Lst(self))
 
+class TreeNode:
+    def __init__(self):
+        self.id=None
+        self.left=None
+        self.right=None
 
 class Solution:
     def sortList(self, head: ListNode) -> ListNode:
@@ -325,12 +330,45 @@ class Solution:
                 minPub=min(minPub,n)
         return minPub if minPub!=float("inf") else -1
 
+    def restoreArray(self, adjacentPairs):
+        if not len(adjacentPairs) or not len(adjacentPairs[0]):return []
+        l1=len(adjacentPairs)
+        NodeDic=collections.defaultdict(TreeNode)
+        NotFullNodeDic=collections.defaultdict(TreeNode)
+        for i in range(l1):
+            x,y=adjacentPairs[i]
+            ndx=NotFullNodeDic[x]
+            ndx.id=x
+            ndy=NotFullNodeDic[y]
+            ndy.id=y
+            if ndx.left==None:
+                ndx.left=ndy
+            else:
+                ndx.right=ndy
+                NodeDic[x]=ndx
+                NotFullNodeDic.pop(x)
+            if ndy.left==None:
+                ndy.left=ndx
+            else:
+                ndy.right=ndx
+                NodeDic[y]=ndy
+                NotFullNodeDic.pop(y)
+        left,right=NotFullNodeDic.values()
+        rtLst=[]
+        while left.left or left.right:
+            rtLst.append(left.id)
+            tmp=left
+            if left.left:left=left.left
+            elif left.right:left=left.right
+            else:break
+            if left.left==tmp:left.left=None
+            else:left.right=None
+        rtLst.append(right.id)
+        return rtLst
 
-routes = [[25,33],[3,5,13,22,23,29,37,45,49],[15,16,41,47],[5,11,17,23,33],[10,11,12,29,30,39,45],[2,5,23,24,33],[1,2,9,19,20,21,23,32,34,44],[7,18,23,24],[1,2,7,27,36,44],[7,14,33]]
-source=7
-target=47
+adjacentPairs = [[2,1],[3,4],[3,2]]
 so=Solution()
-print(so.numBusesToDestination(routes,source,target))
+print(so.restoreArray(adjacentPairs))
 
 #示例 1：
 #

@@ -257,6 +257,64 @@ public:
         }
         return roman;
     }
+
+    int entryTime(std::string s,std::string keypad) {
+        int sum = 0;
+        for (int i = 1; i < s.length(); ++i) {
+            auto current= keypad.find(s[i-1]);
+            auto target = keypad.find(s[i]);
+            int x1 = current % 3, y1 = current / 3;
+            int x2 = target % 3, y2 = target / 3;
+            if (x1 == x2 && y1 == y2)sum += 0;
+            else if(abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1)sum += 1;
+            else sum += 2;
+        }
+        return sum;
+    }
+    int MaximumArriveAtSameTime(std::vector<double>& speed, std::vector<double>& location, double destination) {
+        int maxPlaton = 1;
+        for (int i = location.size() - 1; i >= 1; --i) {
+            for (int j = 0; j < i; ++j) {
+                if (location[j] < location[j + 1]) {
+                    std::swap(location[j], location[j + 1]);
+                    std::swap(speed[j], speed[j + 1]);
+                }
+            }
+        }
+        int size = location.size();
+        while (size) {
+
+            //for (int i = 0; i <= size - 1; ++i) {
+            //    std::cout << location[i];
+            //}
+
+            for (int i = 0; i <= size - 1; ++i) {
+                location[i] = location[i] + speed[i];
+            }
+            int j = 0;
+            while (j<=size-1) {
+                if (location[j] >= destination) {
+                    std::swap(location[j], location[size - 1]);
+                    std::swap(speed[j], speed[size - 1]);
+                    size -= 1;
+                }
+                else j += 1;
+            }
+            for (int i = 1; i <= size - 1; ++i) {
+                if (location[i] >= location[i - 1]) { 
+                    location[i] = location[i - 1];
+                    speed[i] = speed[i - 1];
+                }
+            }
+            std::unordered_map<double, int> Count;
+                for (int i = 0; i <= size - 1; ++i) {
+                    Count[location[i]] += 1;
+                    if (Count[location[i]] > maxPlaton)maxPlaton = Count[location[i]];
+                }
+            std::cout << std::endl;
+        }
+        return maxPlaton;
+    }
 };
 
 struct Test {
@@ -283,8 +341,14 @@ int CheckByte(char* data, int start, int end) {
 
 int main() {
     try {
+        std::vector<double>  speed({ 4.0,2.0,1.0,1.0 });
+        std::vector<double>  location({ 3.0,5.0,2.0,1.0 });
+        double destination= 10.0;
+
         // test solution
         Solution so;
+        std::cout << so.MaximumArriveAtSameTime(speed,location,destination) << std::endl;
+
         // string s =
         // "yekbsxznylrwamcaugrqrurvpqybkpfzwbqiysrdnrsnbftvrnszfjbkbmrctjizkjqoxqzddyfnavnhqeblfmzqgsjflghaulbadwqsyuetdelujphmlgtmkoaoijypvcajctbaumeromgejtewbwqptotrorephegyobbstvywljboeihdliknluqdpgampjyjpinxhhqexoctysfdciqjbzilnodzoihihusxluqoayenluziobxiodrfdkinkzzozmxfezfvllpdvogqqtquwcsijwachefspywdgsohqtlquhnoecccgbkrzqcprzmwvygqwddnehhi";
         // s = "cc";
