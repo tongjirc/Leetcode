@@ -24,7 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geojson as geo
 from scipy import interpolate
-
+from queue import PriorityQueue
 
 class RouteTree:
     def __init__(self,val):
@@ -366,9 +366,60 @@ class Solution:
         rtLst.append(right.id)
         return rtLst
 
-adjacentPairs = [[2,1],[3,4],[3,2]]
+    def pathInZigZagTree(self, label):
+        """
+        :type label: int
+        :rtype: List[int]
+        """
+        Lst=[label]
+        target=label
+        L=int(math.log(target,2))+1
+        while L>1:
+            if L%2==0:
+                n=2**L-target
+            else:
+                n=target+1-2**(L-1)
+            nextn=(n+1)//2
+            L=L-1
+            if L%2==0:
+                target=2**L-nextn
+            else:
+                target=nextn-1+2**(L-1)
+            Lst.append(target)
+        Lst.reverse()
+        return Lst
+
+    def nthSuperUglyNumber(self, n, primes):
+        seen = {1}
+        heap = [1]
+
+        for i in range(n):
+            ugly = heapq.heappop(heap)
+            for prime in primes:
+                nxt = ugly * prime
+                if nxt not in seen:
+                    seen.add(nxt)
+                    heapq.heappush(heap, nxt)
+
+        return ugly
+    def reverseVowels(self, s):
+        left,right=0,len(s)-1
+        while left<right:
+            while left<right and s[left] not in ["a","e","i","o","u"]:
+                left+=1
+            while left<right and s[right] not in ["a","e","i","o","u"]:
+                right-=1
+            if left!=right:
+                s=s[:left]+s[right]+s[left+1:right]+s[left]+s[right+1:]
+                left,right=left+1,right-1
+            else:
+                return s
+        return s
+
+
+s="leetcode"
 so=Solution()
-print(so.restoreArray(adjacentPairs))
+print(so.reverseVowels(s))
 
 #示例 1：
 #

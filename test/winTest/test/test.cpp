@@ -13,6 +13,7 @@
 #include <list>
 #include <numeric>
 #include <string>
+#include <queue>
 
 //C Lib
 #include <math.h>
@@ -42,8 +43,65 @@ typedef struct TreeNode {
     struct TreeNode* right;
 };
 
-class Solution {
+class Product
+{
 public:
+    virtual int operation(int a, int b) = 0;
+};
+
+class Add :public Product {
+public:
+    int operation(int a, int b) {
+        return a + b;
+    }
+};
+
+class Mul :public Product {
+public:
+    int operation(int a, int b) {
+        return a * b;
+    }
+};
+
+class Abs :public  Product {
+public:
+    int operation(int a, int b) {
+        return a - b;
+    }
+};
+
+class Factory
+{
+public:
+    virtual Product* Create() = 0;
+};
+
+class Factory_Add :public Factory {
+public:
+    Product* Create() {
+        return new Add();
+    }
+};
+
+class Factory_Mul : public Factory {
+public:
+    Product* Create() {
+        return new Mul();
+    }
+};
+
+class Factory_Abs : public Factory {
+public:
+    Product* Create() {
+        return new Abs();
+    }
+};
+
+
+class Solution {
+    static int a;
+public:
+    void Test();
     bool wordPattern(std::string pattern, std::string str) {
         std::unordered_map<std::string, char> str2ch;
         std::unordered_map<char, std::string> ch2str;
@@ -69,6 +127,7 @@ public:
         }
         return i >= m;
     }
+
     char findTheDifference(std::string s, std::string t) {
         char exor = 0;
         for (char c : s + t) {
@@ -76,6 +135,7 @@ public:
         }
         return exor;
     }
+
     int firstUniqChar(std::string s) {
         //for (int i = 0; i < s.length(); i++) {
         //    if (s.rfind(s[i],s.length()) == s.find(s[i])) 
@@ -317,36 +377,48 @@ public:
     }
 };
 
-struct Test {
-    int a = 10;
-    int b = 20;
+int Solution::a = 0;
+
+void Solution::Test() {
+    printf("test number is %d",a++);
 };
 
-std::ostream& operator<<(std::ostream& out, const Test& t) {
-    out << t.a << ' ' << t.b << std::endl;
-    return out;
-}
+class Node {
+public:
+    int value;
+    Node* next;
+    Node() {}
 
-int CheckByte(char* data, int start, int end) {
-    if (end >= start) {
-        char charGen = data[start];
-        for (int i = start + 1; i < end; i++) {
-            charGen ^= data[i];
+    Node* reverse(Node* node) {
+        if (node == NULL || node->next == NULL) {
+            return node;
         }
-        return charGen;
+        Node* newHead = reverse(node->next);
+        node->next->next = node;
+        node->next = NULL;
+        return newHead;
     }
-    return -1;
-}
+};
+
+
 
 
 int main() {
     try {
+        std::pair<char, int> rNum{ 'R',0 };
+        std::pair<char, int> lNum{ 'L',0 };
+        rNum.second++;
+
+        // test solution
+        Solution so;
+        so.Test();
+        so.Test();
+
+
         std::vector<double>  speed({ 4.0,2.0,1.0,1.0 });
         std::vector<double>  location({ 3.0,5.0,2.0,1.0 });
         double destination= 10.0;
 
-        // test solution
-        Solution so;
         std::cout << so.MaximumArriveAtSameTime(speed,location,destination) << std::endl;
 
         // string s =
@@ -361,11 +433,7 @@ int main() {
         uint8_t a =255;
         int8_t b(a);
         std::cout << b;
-
-        char description[5] = { 0xAA,0x55,0x01,0x06,0x13};
-        auto byte = CheckByte(description, 0, 5);
-        auto x0 = char(byte)==char(0xEB);
-        std::cout << std::endl;
+        
     }
     catch (std::exception e)
     {
