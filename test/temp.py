@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script file.
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Fri Jan 17 15:43:45 2020
 
 @author: AlvinChen
@@ -416,10 +409,72 @@ class Solution:
                 return s
         return s
 
+    def maxCount(self, m, n, ops):
+        return min([m]+list(map(lambda x:x[0],ops)))*min([n]+list(map(lambda x:x[0],ops)))
 
-s="leetcode"
+    def findNthDigit(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+        num=1
+        left_num,right_num=1,9
+        while not left_num<=n<=right_num:
+            num+=1
+            left_num,right_num= right_num+1,right_num+num*9*10**(num-1)
+        number=str(10**(num-1)+(n-(left_num))//num)
+        num_number=(n-(left_num-1))%num-1
+        return int(number[num_number])
+
+    def largestSumAfterKNegations(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        nums=sorted(nums)
+        length=len(nums)
+        target=0
+        if nums[-1]<target:
+            if k<=length:
+                return sum([-nums[i] for i in range(k)])+sum(nums[k:])
+            else:
+                return -sum(nums)
+        elif nums[0]>target:
+            return sum(nums[1:])+nums[0]*(-1)**(k%2)
+        else:
+            left,right=0,length-1
+            target_0ord=k
+            while left<=right:
+                mid=left+((right-left)>>1)
+                if nums[mid]<target:
+                    if nums[mid+1]>target:
+                        target_0ord=mid+1
+                        break
+                    else:
+                        left=mid+1
+                elif nums[mid]>target:
+                    if nums[mid-1]<target:
+                        target_0ord=mid
+                        break
+                    else:
+                        right=mid-1
+                else:
+                    target_0ord=mid
+                    break
+            if k>target_0ord:
+                return sum([-nums[i] for i in range(target_0ord)])+sum(nums[target_0ord:]) if (k-target_0ord)%2==0 else sum([-nums[i] for i in range(target_0ord)])+sum(nums[target_0ord:])+2*max(-nums[target_0ord+1],-nums[target_0ord],-nums[target_0ord])
+            else:
+                return sum([-nums[i] for i in range(k)])+sum(nums[k:])
+    def canConstruct(self, ransomNote, magazine):
+        if len(ransomNote) > len(magazine):
+            return False
+        return not collections.Counter(ransomNote) - collections.Counter(magazine)
+
+ransomNote = "aac"
+magazine = "aab"
 so=Solution()
-print(so.reverseVowels(s))
+print(so.canConstruct(ransomNote, magazine))
 
 #示例 1：
 #

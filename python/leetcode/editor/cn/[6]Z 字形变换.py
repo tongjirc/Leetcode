@@ -50,11 +50,20 @@
 #  s 由英文字母（小写和大写）、',' 和 '.' 组成 
 #  1 <= numRows <= 1000 
 #  
-#  Related Topics 字符串 
-#  👍 1259 👎 0
+#  Related Topics 字符串 👍 1362 👎 0
 
 
+from functools import reduce
+from itertools import product
 # leetcode submit region begin(Prohibit modification and deletion)
-class Solution:
-    def convert(self, s: str, numRows: int) -> str:
+class Solution(object):
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+
 # leetcode submit region end(Prohibit modification and deletion)
+
+so=Solution()
