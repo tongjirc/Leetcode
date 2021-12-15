@@ -97,6 +97,14 @@ public:
 	}
 };
 
+class NewSort {
+public:
+	//重载 () 运算符
+	bool operator ()(const std::string& a, const std::string& b) {
+		//按照字符串的长度，做升序排序(即存储的字符串从短到长)
+		return  (a.length() < b.length());
+	}
+};
 
 class Solution {
 	static int a;
@@ -454,8 +462,8 @@ public:
 	int maxPower(std::string s) {
 		long max_power = 1;
 		long now_power = 1;
-		char pre='1';
-		for (char chr:s) {
+		char pre = '1';
+		for (char chr : s) {
 			if (chr == pre) {
 				++now_power;
 			}
@@ -495,7 +503,7 @@ public:
 		}
 
 		for (auto i = ransomNote.begin(); i != ransomNote.end(); ++i) {
-			if (dct_magazine[*i] == 0){
+			if (dct_magazine[*i] == 0) {
 				return false;
 			}
 			else {
@@ -518,66 +526,230 @@ public:
 		int m = grid.size(), n = grid[0].size();
 		std::vector<std::pair<int, int>> lst_edge_node;
 		std::vector<std::pair<int, int>> lst_searched_node;
-		std::vector<std::pair<int, int>> lst_dfs;
+		std::vector<std::pair<int, int>> lst_dfs = { {row,col} };
 		int main_color = grid[row][col];
 		int searched_color = -1;
 
 		std::vector<std::pair<int, int>> lst_direction{ {1,0} ,{-1,0},{0,1},{0,-1} };
 
 		while (lst_dfs.size()) {
-			std::pair<int, int>& pair = lst_dfs[lst_dfs.size() - 1];
+			std::pair<int, int> pair = lst_dfs[lst_dfs.size() - 1];
 			lst_dfs.pop_back();
 			bool is_edge = false;
 			for (auto itr = lst_direction.begin(); itr != lst_direction.end(); ++itr) {
-				std::pair<int, int> pair1{ pair.first + itr->second,pair.second + itr->second };
+				std::pair<int, int> pair1{ pair.first + itr->first,pair.second + itr->second };
 
 				if ((0 <= pair1.first && pair1.first < m) && (0 <= pair1.second && pair1.second < n) && grid[pair1.first][pair1.second] == main_color) {
-					lst_dfs.emplace_back({ pair1.first,pair1.second });
+					lst_dfs.emplace_back(std::make_pair(pair1.first, pair1.second));
 				}
 				else if ((0 <= pair1.first && pair1.first < m) && (0 <= pair1.second && pair1.second < n) && grid[pair1.first][pair1.second] == searched_color) {
-				continue;
+					continue;
 				}
-				else 
+				else
 				{
 					is_edge = true;
 				}
 			}
 			if (is_edge) {
-				lst_edge_node.append([x, y])
+				lst_edge_node.emplace_back(std::make_pair(pair.first, pair.second));
 			}
 			else {
-				lst_searched_node.append([x, y])
-					grid[x][y] = searched_color
+				lst_searched_node.emplace_back(std::make_pair(pair.first, pair.second));
 			}
+			grid[pair.first][pair.second] = searched_color;
 
 		}
+		while (lst_edge_node.size()) {
+			auto pair = lst_edge_node[lst_edge_node.size() - 1];
+			lst_edge_node.pop_back();
+			grid[pair.first][pair.second] = color;
 
-		while lst_edge_node :
-			x, y = lst_edge_node.pop()
-				grid[x][y] = color
+		}
+		while (lst_searched_node.size()) {
+			auto pair = lst_searched_node[lst_searched_node.size() - 1];
+			lst_searched_node.pop_back();
+			grid[pair.first][pair.second] = main_color;
 
-				while lst_searched_node :
-			x, y = lst_searched_node.pop()
-				grid[x][y] = main_color
+		}
+		return(grid);
+	}
 
-				return grid
+	std::vector<int> maxSumOfThreeSubarrays(std::vector<int>& nums, int k) {
 
+		std::vector<std::pair<int, std::vector<int>>> f3{};
+		std::vector<std::pair<int, std::vector<int>>> f2{};
+		std::vector<std::pair<int, std::vector<int>>> f1{};
+
+		for (int i = -k - 1; i != 0; ++i) {
+			f3.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i,i,i }));
+			f2.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i,i }));
+			f1.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i }));
+		}
+
+		for (int i = 0; i != nums.size() - k + 1; ++i) {
+			f1.erase(f1.begin());
+			f2.erase(f2.begin());
+			f3.erase(f3.begin());
+			// f1
+			auto tmp = std::accumulate(nums.begin() + i, nums.begin() + i + k, 0);
+			if (tmp > f1[f1.size() - 1].first) {
+				f1.emplace_back(std::make_pair(tmp, std::vector<int>{i}));
+			}
+			else {
+				f1.emplace_back(f1[f1.size() - 1]);
+			}
+			// f2
+			if (tmp+f1[0].first > f2[f2.size() - 1].first) {
+				std::vector<int> vtr_tmp = f1[0].second;
+				vtr_tmp.emplace_back(i);
+				
+				f2.emplace_back(std::make_pair(tmp + f1[0].first, vtr_tmp));
+			}
+			else {
+				f2.emplace_back(f2[f2.size()-1]);
+			}
+			// f2
+			if (tmp + f2[0].first > f3[f3.size() - 1].first) {
+				std::vector<int> vtr_tmp = f2[0].second;
+				vtr_tmp.emplace_back(i);
+
+				f3.emplace_back(std::make_pair(tmp + f2[0].first, vtr_tmp));
+			}
+			else {
+				f3.emplace_back(f3[f3.size() - 1]);
+			}
+		}
+
+		return f3[f3.size() - 1].second;
+	}
+	bool validTicTacToe(std::vector<std::string>& board) {
+		int num_X = 0, num_O = 0;
+		std::unordered_map<char, int> counter;
+		for (int i = 0; i != 3; ++i) {
+			for (int j = 0; j != 3; ++j) {
+				counter[board[i][j]]++;
+			}
+		}
+
+		bool win_O = (board[0][0] == 'O' && board[1][1] == 'O' && board[2][2] == 'O') || (board[0][2] == 'O' && board[1][1] == 'O' && board[2][0] == 'O')
+			|| (board[0][0] == 'O' && board[0][1] == 'O' && board[0][2] == 'O') || (board[1][0] == 'O' && board[1][1] == 'O' && board[1][2] == 'O') || (board[2][0] == 'O' && board[2][1] == 'O' && board[2][2] == 'O')
+			|| (board[0][0] == 'O' && board[1][0] == 'O' && board[2][0] == 'O') || (board[0][1] == 'O' && board[1][1] == 'O' && board[2][1] == 'O') || (board[0][2] == 'O' && board[1][2] == 'O' && board[2][2] == 'O');
+
+		bool win_X = (board[0][0] == 'X' && board[1][1] == 'X' && board[2][2] == 'X') || (board[0][2] == 'X' && board[1][1] == 'X' && board[2][0] == 'X')
+			|| (board[0][0] == 'X' && board[0][1] == 'X' && board[0][2] == 'X') || (board[1][0] == 'X' && board[1][1] == 'X' && board[1][2] == 'X') || (board[2][0] == 'X' && board[2][1] == 'X' && board[2][2] == 'X')
+			|| (board[0][0] == 'X' && board[1][0] == 'X' && board[2][0] == 'X') || (board[0][1] == 'X' && board[1][1] == 'X' && board[2][1] == 'X') || (board[0][2] == 'X' && board[1][2] == 'X' && board[2][2] == 'X');
+
+		if (!(counter['O'] == counter['X'] || counter['O'] + 1 == counter['X']) || (
+			counter['O'] == counter['X'] && win_X) || (win_O and win_X) || (
+				counter['O'] + 1 == counter['X'] and win_O)) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	std::string shortestCompletingWord(std::string licensePlate, std::vector<std::string>& words) {
+		std::stable_sort(words.begin(), words.end(), NewSort());
+		std::unordered_map<char, int> counter_plate;
+		for (auto itr = licensePlate.begin(); itr != licensePlate.end(); ++itr) {
+			if (*itr >= 'a' && *itr <= 'z') {
+				counter_plate[*itr]++;
+			}
+			else if (*itr >= 'A' && *itr <= 'Z') {
+				counter_plate[*itr-'A'+'a']++;
+			}
+		}
+		for (auto& word : words) {
+			std::unordered_map<char, int> counter_tmp(counter_plate);
+			for (auto itr = word.begin(); itr != word.end(); ++itr) {
+
+				if (counter_tmp.find(*itr)!= counter_tmp.end()) {
+					if (--counter_tmp[*itr] == 0) {
+						counter_tmp.erase(*itr);
+						if (counter_tmp.size() == 0) {
+							return word;
+						}
+					}
+				}
+			}
+		}
+		return words[words.size() - 1];
+
+	}
+	std::string toLowerCase(std::string s) {
+		for (auto& chr : s) {
+			chr = std::tolower(chr);
+		}
+		
+		for (auto& chr:s) {
+			if (chr >= 'A' && chr <= 'Z') {
+				chr = chr + 'a' - 'A';
+			}
+		}
+
+		for (auto itr = s.begin(); itr != s.end();++itr) {
+			if (*itr >= 'A' && *itr <= 'Z') {
+				*itr = *itr + 'a' - 'A';
+			}
+		}
+		return(s);
+	}
+	int maxIncreaseKeepingSkyline(std::vector<std::vector<int>>& grid) {
+		int l1 = grid.size(), l2 = grid[0].size();
+		std::vector<int> max_x(l1, 0);
+		std::vector<int> max_y(l2, 0);
+		int rt_sum = 0;
+		for (auto x = 0; x != l1; ++x) {
+			for (auto y = 0; y != l2; ++y) {
+				max_y[y] = std::max(grid[x][y], max_y[y]);
+				max_x[x] = std::max(grid[x][y], max_x[x]);
+			}
+		}
+		for (auto x = 0; x != l1; ++x) {
+			for (auto y = 0; y != l2; ++y) {
+				rt_sum+= std::min(max_x[x], max_y[y])- grid[x][y];
+			}
+		}
+		return rt_sum;
+	}
+
+	int scheduleCourse(std::vector<std::vector<int>>& courses) {
+		sort(courses.begin(), courses.end(), [](const auto& c0, const auto& c1) {return c0[1] < c1[1]; });
+		std::priority_queue<int> q;
+		int total = 0;
+		for (const auto& course : courses) {
+			int ti = course[0], di = course[1];
+			if (total + ti <= di) {
+				total += ti;
+				q.push(ti);
+			}
+			else if (!q.empty() && q.top() > ti) {
+				total -= q.top() - ti;
+				q.pop();
+				q.push(ti);
+			}
+		}
+		return q.size();
 	}
 };
 
 int Solution::a = 0;
 
 void Solution::Test() {
-	int a = 2;
-	std::vector<int> b{ 4, 3, 3, 8, 5, 2 };
-	printf("MOD is %d",this->superPow(a,b));
+
+	std::string s = "Ah71752";
+	printf("%s", this->toLowerCase(s));
 };
+
+
 
 class Node {
 public:
 	int value;
 	Node* next;
 	Node() {}
+
+
 
 	Node* reverse(Node* node) {
 		if (node == NULL || node->next == NULL) {
@@ -590,6 +762,55 @@ public:
 	}
 };
 
+class TopVotedCandidate {
+private:
+	std::vector<std::pair<int, int>> time_win;
+public:
+	TopVotedCandidate(std::vector<int>& persons, std::vector<int>& times) {
+		std::unordered_map<int, int> person_score; // {person:score}
+		std::vector<int> winner{ NULL,0 };
+		for (int i = 1; i != persons.size() + 1; ++i) {
+			if (++person_score[persons[i - 1]] >= winner[1]) {
+				winner[0] = persons[i - 1];
+				winner[1] = person_score[persons[i - 1]];
+			}
+			time_win.emplace_back(std::make_pair(times[i - 1], winner[0]));
+		}
+	}
+
+	int q(int t) {
+		int left = 0, right = time_win.size() - 1;
+		if (t >= time_win[right].first) {
+			return(time_win[right].second);
+		}
+		else if (t <= time_win[left].first) {
+			return(time_win[left].second);
+		}
+		else {
+			while (left <= right) {
+				int mid = left + ((right - left) >> 1);
+				if (time_win[mid].first == t) {
+					return(time_win[mid].second);
+				}
+
+				else if (time_win[mid].first > t) {
+					if (time_win[mid - 1].first <= t) {
+						return(time_win[mid - 1].second);
+					}
+					right = mid;
+				}
+				else {
+					if (time_win[mid + 1].first > t) {
+						return(time_win[mid].second);
+					}
+					left = mid + 1;
+				}
+			}
+			return -1;
+		}
+
+	}
+};
 
 
 int main() {
