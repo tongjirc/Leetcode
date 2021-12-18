@@ -50,11 +50,8 @@
 #  对 richer 的观察在逻辑上是一致的 
 #  
 #  Related Topics 深度优先搜索 图 拓扑排序 数组 👍 95 👎 0
-
-
 from functools import reduce
 from itertools import product
-
 
 # leetcode submit region begin(Prohibit modification and deletion)
 class Solution(object):
@@ -64,46 +61,23 @@ class Solution(object):
         :type quiet: List[int]
         :rtype: List[int]
         """
-
-        class Person:
-            def __init__(self, name, quiet):
-                self.name = name
-                self.quietestNum = quiet
-                self.richerNode = []
-                self.poorerNode = []
-
-        rt_lst = [0] * len(quiet)
-        dct_person = {}
-        for rich in richer:
-            # 初始化Node
-            if rich[0] not in dct_person:
-                dct_person[rich[0]] = Person(rich[0], quiet=quiet[rich[0]])
-            if rich[1] not in dct_person:
-                dct_person[rich[1]] = Person(rich[1], quiet=quiet[rich[1]])
-            # 更新poorer
-            dct_person[rich[0]].poorerNode.append(dct_person[rich[1]])
-            # 更新richer
-            dct_person[rich[1]].richerNode.append(dct_person[rich[0]])
-
-            new_quiet = dct_person[rich[0]].quietestNum
-            if new_quiet <= dct_person[rich[1]].quietestNum:
-                continue
-            else:
-                dct_person[rich[1]].quietestNum = new_quiet
-                # 遍历所有的poorer更新所有poorer的quietestNum直到quiestestNum更大或为叶子
-                lst_dfs_poorerperson = dct_person[rich[1]].poorerNode.copy()
-                while lst_dfs_poorerperson:
-                    person = lst_dfs_poorerperson.pop()
-                    if person.quietestNum>=new_quiet or person.poorerNode==[]:
-                        continue
-                    else:
-                        person.quietestNum=new_quiet
-                        lst_dfs_poorerperson.extend(person.poorerNode)
-
-        for name, person in dct_person.items():
-            rt_lst[name] = quiet.index(person.quietestNum)
-        return rt_lst
-
+        n = len(quiet)
+        g = [[] for _ in range(n)] #poorer list
+        inDeg = [0] * n # 入度
+        for r in richer:
+            g[r[0]].append(r[1])
+            inDeg[r[1]] += 1
+        ans = list(range(n))
+        q = deque(i for i, deg in enumerate(inDeg) if deg == 0)
+        while q:
+            x = q.popleft()
+            for y in g[x]:
+                if quiet[ans[x]] < quiet[ans[y]]:
+                    ans[y] = ans[x]
+                inDeg[y] -= 1
+                if inDeg[y] == 0:
+                    q.append(y)
+        return ans
 
 # leetcode submit region end(Prohibit modification and deletion)
 

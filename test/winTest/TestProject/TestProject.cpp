@@ -21,7 +21,6 @@
 #include <stdlib.h>
 
 
-#define PI acos(-1)
 #define MAP_REFERENCE_X 13478345.471 // 13478345.471
 #define MAP_REFERENCE_Y 3665872.257 // 3665872.257
 #define NET_REFERENCE_X 13478345.471
@@ -731,14 +730,118 @@ public:
 		}
 		return q.size();
 	}
+	std::vector<int> loudAndRich(std::vector<std::vector<int>>& richer, std::vector<int>& quiet) {
+		int n = quiet.size();
+		std::vector<std::vector<int>> g;
+		std::vector<int> inDeg(n,0);
+		std::vector<int> ans;
+		for (int i = 0; i < n; ++i) {
+			g.push_back({});
+			ans.push_back(i);
+		}
+		for (const auto& r : richer) {
+
+			g[r[0]].emplace_back(r[1]);
+			inDeg[r[1]] += 1;
+		}
+		std::deque<int> q;
+		for (int i = 0; i < n; ++i) {
+			if (inDeg[i] == 0) {
+				q.emplace_back(i);
+			}
+		}
+		while (!q.empty()) {
+			int x = q.front();
+			q.pop_front();
+			for (auto& y : g[x]) {
+				if (quiet[ans[x]] < quiet[ans[y]]) {
+					ans[y] = ans[x];
+				}
+				inDeg[y] -= 1;
+				if (inDeg[y] == 0) {
+					q.emplace_back(y);
+				}
+			}
+		}
+		return ans;
+	}
+	int visiblePoints(std::vector<std::vector<int>>& points, int angle, std::vector<int>& location) {
+		std::vector<double>lst_angle;
+		int x1 = location[0], y1 = location[1];
+		int equal_point = 0;
+		double PI = acos(-1);
+		for (const auto& point : points) {
+			if (x1 == point[0] && y1 == point[1]) {
+				++equal_point;
+			}
+			else {
+				lst_angle.emplace_back(atan2(point[1] - y1, point[0] - x1) * 180 / PI + 180);
+			}
+		}
+		std::sort(lst_angle.begin(), lst_angle.end());
+		int length = lst_angle.size();
+		int max_window = 0, window_length = 0;
+		int left = 0, right = 0;
+		while (length) {
+			
+			while (std::fmod((lst_angle[right] - lst_angle[left] + 360), 360) <= angle) {
+				++window_length;
+				++right;
+				right %= length;
+				if (right == left) {
+					break;
+				}
+			}
+			max_window = std::max(max_window, window_length);
+			++left;
+			left %= length;
+			--window_length;
+			if (left == 0) {
+				break;
+			}
+		}
+		return max_window + equal_point;
+	}
+	int countBattleships(std::vector<std::vector<char>>& board) {
+		int ans = 0;
+		int m = board.size(), n = board[0].size();
+		for (int x = 0; x < m; ++x) {
+			for (int y = 0; y < n; ++y) {
+				if (board[x][y] == 'X') {
+					if (x > 0 && board[x - 1][y] == 'X') {
+						continue;
+					}
+					else if(y > 0 && board[x][y - 1] == 'X') {
+						continue;
+					}
+					ans++;
+				}
+			}
+		}
+		return ans;
+	}
 };
 
 int Solution::a = 0;
 
 void Solution::Test() {
+	//std::string st = "[['X','.','.','X'],['.','.','.','X'],['.','.','.','X']]";
+	//std::cin >> st;
+	//for (auto& chr : st) {
+	//	if (chr == '[') {
+	//		chr = '{';
+	//	}
+	//	else if (chr == ']') {
+	//		chr = '}';
+	//	}
+	//	else if (chr == '\"') {
+	//		chr = '\'';
+	//	}
+	//}
 
-	std::string s = "Ah71752";
-	printf("%s", this->toLowerCase(s));
+
+	std::vector<std::vector<char>> board{{'X','.','.','X'},{'.','.','.','X'},{'.','.','.','X'}};
+	printf("%d", this->countBattleships(board));
 };
 
 
@@ -823,12 +926,6 @@ int main() {
 		Solution so;
 		so.Test();
 
-
-		std::vector<double>  speed({ 4.0,2.0,1.0,1.0 });
-		std::vector<double>  location({ 3.0,5.0,2.0,1.0 });
-		double destination = 10.0;
-
-		std::cout << so.MaximumArriveAtSameTime(speed, location, destination) << std::endl;
 
 		// string s =
 		// "yekbsxznylrwamcaugrqrurvpqybkpfzwbqiysrdnrsnbftvrnszfjbkbmrctjizkjqoxqzddyfnavnhqeblfmzqgsjflghaulbadwqsyuetdelujphmlgtmkoaoijypvcajctbaumeromgejtewbwqptotrorephegyobbstvywljboeihdliknluqdpgampjyjpinxhhqexoctysfdciqjbzilnodzoihihusxluqoayenluziobxiodrfdkinkzzozmxfezfvllpdvogqqtquwcsijwachefspywdgsohqtlquhnoecccgbkrzqcprzmwvygqwddnehhi";
