@@ -820,6 +820,27 @@ public:
 		}
 		return ans;
 	}
+	int findJudge(int n, std::vector<std::vector<int>>& trust) {
+		if (n == 1) {
+			return n;
+		}
+		std::vector<int> dct_counter_giver(n, 0);
+		std::vector<int> dct_counter_receiver(n, 0);
+		std::vector<int> lst_candidate;
+		for (const auto& vec : trust) {
+			dct_counter_giver[vec[0]-1]++;
+			dct_counter_receiver[vec[1]-1]++;
+			if(dct_counter_receiver[vec[1] - 1] == n - 1 && dct_counter_giver[vec[1] - 1] == 0){
+				lst_candidate.emplace_back(vec[1] - 1);
+			}
+		}
+		for (auto& i : lst_candidate) {
+			if (dct_counter_receiver[i] == n - 1 && dct_counter_giver[i] == 0){
+				return i+1;
+			}
+		}
+		return -1;
+	}
 };
 
 int Solution::a = 0;
@@ -839,9 +860,9 @@ void Solution::Test() {
 	//	}
 	//}
 
-
-	std::vector<std::vector<char>> board{{'X','.','.','X'},{'.','.','.','X'},{'.','.','.','X'}};
-	printf("%d", this->countBattleships(board));
+	int n = 2;
+	std::vector<std::vector<int>> trust{ {1, 2} };
+	printf("%d", this->findJudge(n,trust));
 };
 
 
