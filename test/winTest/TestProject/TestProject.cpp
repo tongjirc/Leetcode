@@ -841,6 +841,107 @@ public:
 		}
 		return -1;
 	}
+	int strStr(std::string haystack, std::string needle) {
+		int n = haystack.size(), m = needle.size();
+		if (m == 0) {
+			return 0;
+		}
+		std::vector<int> pi(m);
+		for (int i = 1, j = 0; i < m; ++i) {
+			while (j > 0 && needle[i] != needle[j]) {
+				j = pi[j - 1];
+			}
+			if (needle[i] == needle[j]) {
+				j++;
+			}
+			pi[i] = j;
+		}
+		for (int i = 0, j = 0; i < n; i++) {
+			while (j > 0 && haystack[i] != needle[j]) {
+				j = pi[j - 1];
+			}
+			if (haystack[i] == needle[j]) {
+				j++;
+			}
+			if (j == m) {
+				return i - m + 1;
+			}
+		}
+		return -1;
+	}
+	int eatenApples(std::vector<int>& apples, std::vector<int>& days) {
+		int num_days = apples.size();
+		int eaten = 0;
+		std::priority_queue<std::vector<int>> pq;
+		for (int day = 1; day < num_days + 1; ++day) {
+			pq.push({ -days[day - 1] - day, apples[day - 1] });
+			auto i = pq.empty();
+			while (!pq.empty()) {
+				auto top = pq.top();
+				pq.pop();
+				if (top[1] > 0 && -top[0] > day) {
+					top[1]--;
+					eaten++;
+					if(top[1]!=0)pq.push(top);
+					break;
+				}
+			}
+		}
+		int day = num_days + 1;
+		while (!pq.empty()) {
+			auto top = pq.top();
+			pq.pop();
+			if (top[1] > 0 && -top[0] > day) {
+				top[1]--;
+				eaten++;
+				if (top[1] != 0)pq.push(top);
+			}
+			else {
+				continue;
+			}
+			day++;
+		}
+		return eaten;
+	}
+	bool isEvenOddTree(TreeNode* root) {
+		int MAX_INT = 1e6 + 1;
+		int	MIN_INT = 0;
+		int pre_val = MIN_INT, pre_depth = 0;
+		std::deque<std::pair<TreeNode*, int>> lst_bfs_ndoe{ {root,0} };
+		while (!lst_bfs_ndoe.empty()) {
+			auto ptr_pair = lst_bfs_ndoe.begin();
+
+			if (ptr_pair->second != pre_depth) {
+				if (ptr_pair->second % 2 == 0) {
+					pre_val = MIN_INT;
+				}
+				else {
+					pre_val = MAX_INT;
+				}
+			}
+
+			if (ptr_pair->second % 2 == 0 && ptr_pair->first->val > pre_val && ptr_pair->first->val % 2 == 1) {
+				;
+			}
+			else if(ptr_pair->second % 2 == 1 && ptr_pair->first->val < pre_val && ptr_pair->first->val % 2 == 0) {
+				;
+			}
+			else {
+				return false;
+			}
+
+			pre_val = ptr_pair->first->val;
+			pre_depth = ptr_pair->second;
+			if (ptr_pair->first->left) {
+				lst_bfs_ndoe.emplace_back(std::make_pair(ptr_pair->first->left, ptr_pair->second + 1));
+			}
+			if (ptr_pair->first->right) {
+				lst_bfs_ndoe.emplace_back(std::make_pair(ptr_pair->first->right, ptr_pair->second + 1));
+			}
+			lst_bfs_ndoe.pop_front();
+		}
+		return true;
+	}
 };
 
 int Solution::a = 0;
@@ -859,10 +960,9 @@ void Solution::Test() {
 	//		chr = '\'';
 	//	}
 	//}
-
-	int n = 2;
-	std::vector<std::vector<int>> trust{ {1, 2} };
-	printf("%d", this->findJudge(n,trust));
+	std::vector<int> aplles{ 2, 1, 10 };
+	std::vector<int> days{ 2, 10, 1 };
+	printf("%d", this->eatenApples(aplles, days));
 };
 
 
