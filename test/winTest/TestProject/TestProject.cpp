@@ -942,6 +942,60 @@ public:
 		}
 		return true;
 	}
+	std::vector<std::string> findOcurrences(std::string text, std::string first, std::string second) {
+
+		// 删除首尾的空格
+		//std::remove_if(text.begin(), text.end(), isspace);
+		text.erase(0, text.find_first_not_of(" \t"));
+		text.erase(text.find_last_not_of(" \t") + 1);
+
+
+		text = " " + text;
+		bool equal = false;
+		if (first.compare(second) == 0) {
+			equal = true;
+		}
+		std::string match = " " + first + " " + second + " ";
+		int length_n = text.size(), length_m = match.size();
+		std::vector<int> lst_kmp(length_m);
+		for (int i = 1, j = 0; i < length_m; ++i) {
+			while (j > 0 && match[j] != match[i]) {
+				j = lst_kmp[j - 1];
+			}
+			if (match[j] == match[i]) {
+				j++;
+			}
+			lst_kmp[i] = j;
+		}
+		std::vector<int> lst_match;
+		std::vector<std::string> lst_rt;
+		for (int i = 0, j = 0; i < length_n; ++i) {
+			while (j > 0 && match[j] != text[i]) {
+				j = lst_kmp[j - 1];
+			}
+			if (match[j] == text[i]) {
+				j++;
+			}
+			if (j == length_m) {
+				lst_match.emplace_back(i);
+				j = 1;
+				if (equal) {
+					j += first.size() + 1;
+				}
+			}
+		}
+		// find next word
+		for (auto i = 0; i < lst_match.size(); ++i) {
+			int index = lst_match[i];
+			int k = 1;
+			while (index + k < length_n && text[index + k] != ' ') {
+				k++;
+			}
+			lst_rt.emplace_back(text.substr(index + 1, k-1));
+		}
+		return lst_rt;
+
+	}
 };
 
 int Solution::a = 0;
@@ -960,9 +1014,28 @@ void Solution::Test() {
 	//		chr = '\'';
 	//	}
 	//}
-	std::vector<int> aplles{ 2, 1, 10 };
-	std::vector<int> days{ 2, 10, 1 };
-	printf("%d", this->eatenApples(aplles, days));
+	std::string text = " alice is a good girl she is a good student ";
+	std::string first = "a";
+	std::string second = "good";
+	printf("%d", this->findOcurrences(text,first,second));
+
+
+	 text = "we will we will rock you";
+	first = "we";
+	second = "will";
+	printf("%d", this->findOcurrences(text, first, second));
+
+
+	text = "alice is aa good girl she is a good student";
+	first = "a";
+	second = "good";
+	printf("%d", this->findOcurrences(text, first, second));
+
+
+	text = "we we we we will rock you";
+	first = "we";
+	second = "we";
+	printf("%d", this->findOcurrences(text, first, second));
 };
 
 
