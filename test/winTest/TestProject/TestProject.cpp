@@ -37,6 +37,7 @@ typedef struct VehicleSize {
 
 
 typedef struct TreeNode {
+
 	int val;
 	struct TreeNode* left;
 	struct TreeNode* right;
@@ -580,8 +581,8 @@ public:
 		std::vector<std::pair<int, std::vector<int>>> f1{};
 
 		for (int i = -k - 1; i != 0; ++i) {
-			f3.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i,i,i }));
-			f2.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i,i }));
+			f3.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i, i, i }));
+			f2.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i, i }));
 			f1.emplace_back(std::make_pair(INT_MIN, std::vector<int>{ i }));
 		}
 
@@ -598,14 +599,14 @@ public:
 				f1.emplace_back(f1[f1.size() - 1]);
 			}
 			// f2
-			if (tmp+f1[0].first > f2[f2.size() - 1].first) {
+			if (tmp + f1[0].first > f2[f2.size() - 1].first) {
 				std::vector<int> vtr_tmp = f1[0].second;
 				vtr_tmp.emplace_back(i);
-				
+
 				f2.emplace_back(std::make_pair(tmp + f1[0].first, vtr_tmp));
 			}
 			else {
-				f2.emplace_back(f2[f2.size()-1]);
+				f2.emplace_back(f2[f2.size() - 1]);
 			}
 			// f2
 			if (tmp + f2[0].first > f3[f3.size() - 1].first) {
@@ -655,14 +656,14 @@ public:
 				counter_plate[*itr]++;
 			}
 			else if (*itr >= 'A' && *itr <= 'Z') {
-				counter_plate[*itr-'A'+'a']++;
+				counter_plate[*itr - 'A' + 'a']++;
 			}
 		}
 		for (auto& word : words) {
 			std::unordered_map<char, int> counter_tmp(counter_plate);
 			for (auto itr = word.begin(); itr != word.end(); ++itr) {
 
-				if (counter_tmp.find(*itr)!= counter_tmp.end()) {
+				if (counter_tmp.find(*itr) != counter_tmp.end()) {
 					if (--counter_tmp[*itr] == 0) {
 						counter_tmp.erase(*itr);
 						if (counter_tmp.size() == 0) {
@@ -679,14 +680,14 @@ public:
 		for (auto& chr : s) {
 			chr = std::tolower(chr);
 		}
-		
-		for (auto& chr:s) {
+
+		for (auto& chr : s) {
 			if (chr >= 'A' && chr <= 'Z') {
 				chr = chr + 'a' - 'A';
 			}
 		}
 
-		for (auto itr = s.begin(); itr != s.end();++itr) {
+		for (auto itr = s.begin(); itr != s.end(); ++itr) {
 			if (*itr >= 'A' && *itr <= 'Z') {
 				*itr = *itr + 'a' - 'A';
 			}
@@ -706,7 +707,7 @@ public:
 		}
 		for (auto x = 0; x != l1; ++x) {
 			for (auto y = 0; y != l2; ++y) {
-				rt_sum+= std::min(max_x[x], max_y[y])- grid[x][y];
+				rt_sum += std::min(max_x[x], max_y[y]) - grid[x][y];
 			}
 		}
 		return rt_sum;
@@ -733,7 +734,7 @@ public:
 	std::vector<int> loudAndRich(std::vector<std::vector<int>>& richer, std::vector<int>& quiet) {
 		int n = quiet.size();
 		std::vector<std::vector<int>> g;
-		std::vector<int> inDeg(n,0);
+		std::vector<int> inDeg(n, 0);
 		std::vector<int> ans;
 		for (int i = 0; i < n; ++i) {
 			g.push_back({});
@@ -783,7 +784,7 @@ public:
 		int max_window = 0, window_length = 0;
 		int left = 0, right = 0;
 		while (length) {
-			
+
 			while (std::fmod((lst_angle[right] - lst_angle[left] + 360), 360) <= angle) {
 				++window_length;
 				++right;
@@ -811,7 +812,7 @@ public:
 					if (x > 0 && board[x - 1][y] == 'X') {
 						continue;
 					}
-					else if(y > 0 && board[x][y - 1] == 'X') {
+					else if (y > 0 && board[x][y - 1] == 'X') {
 						continue;
 					}
 					ans++;
@@ -828,15 +829,15 @@ public:
 		std::vector<int> dct_counter_receiver(n, 0);
 		std::vector<int> lst_candidate;
 		for (const auto& vec : trust) {
-			dct_counter_giver[vec[0]-1]++;
-			dct_counter_receiver[vec[1]-1]++;
-			if(dct_counter_receiver[vec[1] - 1] == n - 1 && dct_counter_giver[vec[1] - 1] == 0){
+			dct_counter_giver[vec[0] - 1]++;
+			dct_counter_receiver[vec[1] - 1]++;
+			if (dct_counter_receiver[vec[1] - 1] == n - 1 && dct_counter_giver[vec[1] - 1] == 0) {
 				lst_candidate.emplace_back(vec[1] - 1);
 			}
 		}
 		for (auto& i : lst_candidate) {
-			if (dct_counter_receiver[i] == n - 1 && dct_counter_giver[i] == 0){
-				return i+1;
+			if (dct_counter_receiver[i] == n - 1 && dct_counter_giver[i] == 0) {
+				return i + 1;
 			}
 		}
 		return -1;
@@ -882,7 +883,7 @@ public:
 				if (top[1] > 0 && -top[0] > day) {
 					top[1]--;
 					eaten++;
-					if(top[1]!=0)pq.push(top);
+					if (top[1] != 0)pq.push(top);
 					break;
 				}
 			}
@@ -923,7 +924,7 @@ public:
 			if (ptr_pair->second % 2 == 0 && ptr_pair->first->val > pre_val && ptr_pair->first->val % 2 == 1) {
 				;
 			}
-			else if(ptr_pair->second % 2 == 1 && ptr_pair->first->val < pre_val && ptr_pair->first->val % 2 == 0) {
+			else if (ptr_pair->second % 2 == 1 && ptr_pair->first->val < pre_val && ptr_pair->first->val % 2 == 0) {
 				;
 			}
 			else {
@@ -991,13 +992,244 @@ public:
 			while (index + k < length_n && text[index + k] != ' ') {
 				k++;
 			}
-			lst_rt.emplace_back(text.substr(index + 1, k-1));
+			lst_rt.emplace_back(text.substr(index + 1, k - 1));
 		}
 		return lst_rt;
 
 	}
-};
+	int countQuadruplets(std::vector<int>& nums) {
+		std::unordered_map<int, int> dict1, dict2, dict3;
+		int ans = 0;
+		for (int& num : nums) {
+			if (dict3.find(num) != dict3.end()) {
+				ans += dict3[num];
+			}
+			for (auto& item : dict2) {
+				dict3[item.first + num] += item.second;
+			}
+			for (auto& item : dict1) {
+				dict2[item.first + num] += item.second;
+			}
+			dict1[num] ++;
+		}
+		return ans;
+	}
+	bool isNStraightHand(std::vector<int>& hand, int groupSize) {
+		if (groupSize == 1) { return true; }
+		std::deque<std::pair<int, int>> minus_items;
+		std::map<int, int> count;
+		std::vector<int> keys;
+		for (auto& h : hand) {
+			if (count[h] == 0) {
+				keys.emplace_back(h);
+			}
+			count[h]++;
+		}
+		int pre_key = -1;
+		std::sort(keys.begin(), keys.end());
+		for (auto& key : keys) {
+			if (minus_items.size() != 0 && pre_key != -1 && key != pre_key + 1) {
+				return false;
+			}
+			int size = minus_items.size();
+			for (int i = 0; i < size; ++i) {
+				auto item = minus_items[0];
+				minus_items.pop_front();
+				count[key] -= item.first;
+				if (item.second <= 1) {
+					continue;
+				}
+				else {
+					item.second -= 1;
+					minus_items.push_back(item);
+				}
+			}
+			pre_key = key;
+			if (count[key] < 0) {
+				return false;
+			}
+			else if (count[key] == 0) {
+				continue;
+			}
+			else
+			{
+				minus_items.emplace_back(std::make_pair(count[key], groupSize - 1));
+				count[key] = 0;
+			}
+		}
+		if (minus_items.size() == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool checkPerfectNumber(int num) {
+		if (num == 1)return false;
+		int ans = 1;
+		for (int i = 2; i < num / 2 + 1; ++i) {
+			if (num % i == 0 && i <= num / i) {
+				ans += i + num / i;
+			}
+			else if (i > num / i) {
+				break;
+			}
+			else {
+				continue;
+			}
+		}
+		if (ans == num)return true;
+		else return false;
+	}
+	std::string modifyString(std::string s) {
+		int length = s.size();
+		int i = -1;
+		for (auto& chr : s) {
+			i++;
+			if (chr == '?') {
+				if ((i == 0 or s[i - 1] != 'a') and (i + 1 == length or s[i + 1] != 'a'))
+					chr = 'a';
+				else if ((i == 0 or s[i - 1] != 'b') and (i + 1 == length or s[i + 1] != 'b'))
+					chr = 'b';
+				else
+					chr = 'c';
+			}
+			else {
+				continue;
+			}
+		}
+		return s;
+	}
+	std::string simplifyPath(std::string path) {
+		std::vector<std::string> ans;
+		std::string now = "";
+		for (int i = 0; i < path.size(); ++i) {
+			if (path[i] != '/') {
+				now += path[i];
+			}
 
+			if (path[i] == '/' || i == path.size() - 1) {
+				if (now.compare(".") == 0 || now.compare("") == 0) {
+					;
+				}
+				else if (now.compare("..") == 0) {
+					if (!ans.empty()) {
+						ans.pop_back();
+					}
+				}
+				else {
+					ans.emplace_back(now);
+				}
+				now = "";
+				continue;
+			}
+		}
+
+		if (ans.size() == 0) {
+			return "/";
+		}
+
+		std::string rt_st = "";
+		for (std::string& st : ans) {
+			rt_st += '/';
+			rt_st += st;
+		}
+		return rt_st;
+	}
+	bool isAdditiveNumber(std::string num) {
+		int length = num.size();
+		if (length < 3) {
+			return false;
+		}
+		for (int len_first_num = 1; len_first_num < length / 2 + 1; ++len_first_num) {
+			if (num[0] == '0' && len_first_num != 1) {
+				continue;
+			}
+			unsigned long long num_first = atoi(num.substr(0, len_first_num).c_str());
+			for (int len_second_num = 1; len_second_num < std::min((length - len_first_num) / 2, length - 2 * len_first_num) + 1; ++len_second_num) {
+				if (num[len_first_num] == '0' && len_second_num != 1) {
+					break;
+				}
+				unsigned long long num_second = atoi(num.substr(len_first_num, len_second_num).c_str());
+				std::string remain_num = num.substr(len_first_num + len_second_num);
+				printf("first:%d, second:%d \n", num_first, num_second);
+				if (remain_num[0] == '0' && len_first_num != 1 && len_second_num != 1) {
+					continue;
+				}
+				unsigned long long first = num_first, second = num_second;
+				int offset = 0;
+				while (offset != remain_num.size()) {
+					std::string str_second = std::to_string(first + second);
+					if (remain_num.find(str_second, offset) == offset) {
+						offset += str_second.size();
+						first = second;
+						second = atoi(str_second.c_str());
+					}
+					else {
+						break;
+					}
+				}
+				if (offset == remain_num.size()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	// 字符串加法 克服数字过长的问题
+	std::string stringAdd(std::string s, int firstStart, int firstEnd, int secondStart, int secondEnd) {
+		std::string third;
+		int carry = 0, cur = 0;
+		while (firstEnd >= firstStart || secondEnd >= secondStart || carry != 0) {
+			cur = carry;
+			if (firstEnd >= firstStart) {
+				cur += s[firstEnd] - '0';
+				--firstEnd;
+			}
+			if (secondEnd >= secondStart) {
+				cur += s[secondEnd] - '0';
+				--secondEnd;
+			}
+			carry = cur / 10;
+			cur %= 10;
+			third.push_back(cur + '0');
+		}
+		reverse(third.begin(), third.end());
+		return third;
+	}
+	bool increasingTriplet(std::vector<int>& nums) {
+		long first = nums[0];
+		long second = LONG_MAX;
+		for (int i = 1; i < nums.size(); ++i) {
+			if (nums[i] > second) {
+				return true;
+			}
+			else if (nums[i] <= first) {
+				first = nums[i];
+			}
+			else {
+				second = nums[i];
+			}
+		}
+		return false;
+	}
+	int findMinDifference(std::vector<std::string>& timePoints) {
+		int length = timePoints.size();
+		int max_time = 1440;
+		if (length > max_time) { return 0; }
+		std::vector<int> minutes_timePoints(length);
+		for (int i = 0; i < length; ++i) {
+			minutes_timePoints[i] = (((timePoints[i][0] - '0') * 10 + (timePoints[i][1] - '0')) * 60) + ((timePoints[i][3] - '0') * 10 + (timePoints[i][4] - '0'));
+		}
+		std::sort(minutes_timePoints.begin(), minutes_timePoints.end());
+		int min_time_interval_minute = max_time - (minutes_timePoints[length - 1] - minutes_timePoints[0]);
+		for (int i = 1; i < length; ++i) {
+			int interval = std::min(minutes_timePoints[i] - minutes_timePoints[i - 1], max_time - (minutes_timePoints[i] - minutes_timePoints[i - 1]));
+			min_time_interval_minute = std::min(interval, min_time_interval_minute);
+		}
+		return min_time_interval_minute;
+	}
+};
 int Solution::a = 0;
 
 void Solution::Test() {
@@ -1014,28 +1246,11 @@ void Solution::Test() {
 	//		chr = '\'';
 	//	}
 	//}
-	std::string text = " alice is a good girl she is a good student ";
-	std::string first = "a";
-	std::string second = "good";
-	printf("%d", this->findOcurrences(text,first,second));
+	//std::srand(1);
+	//int i = rand() % 10 + 1;
 
-
-	 text = "we will we will rock you";
-	first = "we";
-	second = "will";
-	printf("%d", this->findOcurrences(text, first, second));
-
-
-	text = "alice is aa good girl she is a good student";
-	first = "a";
-	second = "good";
-	printf("%d", this->findOcurrences(text, first, second));
-
-
-	text = "we we we we will rock you";
-	first = "we";
-	second = "we";
-	printf("%d", this->findOcurrences(text, first, second));
+	std::vector<std::string > timePoints{ "23:59", "00:00" };
+	printf("%d\n", this->findMinDifference(timePoints));
 };
 
 
@@ -1106,6 +1321,16 @@ public:
 			return -1;
 		}
 
+	}
+	bool containsNearbyDuplicate(std::vector<int>& nums, int k) {
+		std::unordered_map<int, int> dct_nums;
+		for (int i = 0; i < nums.size(); ++i) {
+			if (dct_nums.find(nums[i]) != dct_nums.end() && i - dct_nums[nums[i]] <= k) {
+				return true;
+			}
+			dct_nums[nums[i]] = i;
+		}
+		return false;
 	}
 };
 
