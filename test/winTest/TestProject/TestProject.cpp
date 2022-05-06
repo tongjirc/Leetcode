@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <set>
+#include <unordered_set>
 #include <list>
 #include <unordered_map>
 #include <map>
@@ -97,12 +98,21 @@ public:
 	}
 };
 
-class NewSort {
+class NewSortString {
 public:
 	//重载 () 运算符
 	bool operator ()(const std::string& a, const std::string& b) {
 		//按照字符串的长度，做升序排序(即存储的字符串从短到长)
 		return  (a.length() < b.length());
+	}
+};
+
+class NewSortVector {
+public:
+	//重载 () 运算符
+	bool operator ()(const std::vector<int>& a, const std::vector<int>& b) {
+		//按照字符串的长度，做升序排序(即存储的字符串从短到长)
+		return  std::min(a[0],a[1]) >= std::min(b[0],b[1]);
 	}
 };
 
@@ -649,7 +659,7 @@ public:
 		}
 	}
 	std::string shortestCompletingWord(std::string licensePlate, std::vector<std::string>& words) {
-		std::stable_sort(words.begin(), words.end(), NewSort());
+		std::stable_sort(words.begin(), words.end(), NewSortString());
 		std::unordered_map<char, int> counter_plate;
 		for (auto itr = licensePlate.begin(); itr != licensePlate.end(); ++itr) {
 			if (*itr >= 'a' && *itr <= 'z') {
@@ -1229,12 +1239,309 @@ public:
 		}
 		return min_time_interval_minute;
 	}
+	int minJumps(std::vector<int>& arr) {
+		int length = arr.size();
+		std::unordered_map<int, std::vector<int>> dct_num_pos;
+		for (int i = 0; i < length; ++i) {
+			dct_num_pos[arr[i]].emplace_back(i);
+		}
+		std::deque<std::pair<int, int>> lst_bfs{ {0,0} };
+		std::set<int> set_reached_node;
+		set_reached_node.emplace(0);
+		while (!lst_bfs.empty()) {
+			auto node_depth = lst_bfs.front();
+			lst_bfs.pop_front();
+			if (node_depth.first == length - 1) {
+				return node_depth.second;
+			}
+			else {
+				if (node_depth.first + 1 < length && set_reached_node.find(node_depth.first + 1) == set_reached_node.end()) {
+					lst_bfs.emplace_back(std::make_pair(node_depth.first + 1, node_depth.second + 1));
+					set_reached_node.emplace(node_depth.first + 1);
+				}
+				if (node_depth.first - 1 >= 0 && set_reached_node.find(node_depth.first - 1) == set_reached_node.end()) {
+					lst_bfs.emplace_back(std::make_pair(node_depth.first - 1, node_depth.second + 1));
+					set_reached_node.emplace(node_depth.first - 1);
+				}
+				if (dct_num_pos.find(arr[node_depth.first]) != dct_num_pos.end()) {
+					for (auto pos_candi : dct_num_pos[arr[node_depth.first]]) {
+						if (set_reached_node.find(pos_candi) == set_reached_node.end()) {
+							lst_bfs.emplace_back(std::make_pair(pos_candi, node_depth.second + 1));
+							set_reached_node.emplace(pos_candi);
+						}
+					}
+					dct_num_pos.erase(arr[node_depth.first]);
+				}
+			}
+		}
+		return -1;
+	}
+	int countValidWords(std::string sentence) {
+		int res = 0;
+		int num_conn = 0;
+		bool break_flag = false;
+		std::vector<char> biaodian{ '!', '.', ',' };
+		for (int i = 0; i != sentence.size(); ++i) {
+			if (sentence[i] == ' ') {
+				if (!break_flag && i!=0 && sentence[i-1] != ' ')++res;
+				break_flag = false;
+				num_conn = 0;
+				continue;
+			}
+			else if (break_flag) {
+				continue;
+			}
+			else {
+				if (sentence[i] >= '0' && sentence[i] <= '9') {
+					break_flag = true;
+					continue;
+				}
+				else if (sentence[i] == '-') {
+					if (i != 0 && i != sentence.size() - 1 && 'z' >= sentence[i - 1] && sentence[i - 1] >= 'a' && 'z' >= sentence[i + 1] && sentence[i + 1] >= 'a' && num_conn == 0) {
+						++num_conn;
+					}
+					else {
+						break_flag = true;
+						continue;
+					}
+				}
+				else if (sentence[i] == '!' || sentence[i] == '.' || sentence[i] == ',') {
+					if (i == sentence.size() - 1 || (i != sentence.size() - 1 && sentence[i + 1] == ' ')) {
+						;
+					}
+					else {
+						break_flag = true;
+						continue;
+
+					}
+				}
+				else {
+					;
+				}
+			}
+			if (i == sentence.size() - 1) {
+				if(!break_flag)++res;
+			}
+		}
+		return res;
+	}
+	int numberOfWeakCharacters(std::vector<std::vector<int>>& properties) {
+		sort(properties.begin(), properties.end(), [](std::vector<int> a, std::vector<int> b) {
+			return std::min(a[0],a[1]) > std::min(b[0],b[1]);
+			});
+		int res = 0;
+		int now_max0 = properties[0][0], now_max1 = properties[0][1];
+		int pre_min = INT_MAX;
+		int pre_max0 = INT_MAX, pre_max1 = INT_MAX;
+		for (int i = 1; i < properties.size(); ++i) {
+			int now_min = std::min(properties[i][0], properties[i][1]);
+			if (now_min < pre_min) {
+				pre_max0 = now_max0;
+				pre_max1 = now_max1;
+				pre_min = now_min;
+			}
+			if (properties[i][0] < pre_max0 && properties[i][1] < pre_max1) {
+				++res;
+			}
+			else {
+				now_max0 = std::max(properties[i][0], now_max0);
+				now_max1 = std::max(properties[i][1], now_max1);
+			}
+		}
+		return res;
+
+	}
+	int countKDifference(std::vector<int>& nums, int k) {
+		int ans = 0;
+		std::unordered_map<int, int> count;
+		for (auto& num : nums) {
+			count[num]++;
+		}
+		for (auto& item : count) {
+
+			if (count.find(item.first + k)!=count.end()) {
+				ans += item.second * count[item.first + k];
+			}
+		}
+		return ans;
+	}
+	std::string mostCommonWord(std::string paragraph, std::vector<std::string>& banned) {
+		std::unordered_set<std::string> bannedSet;
+		for (auto& word : banned) {
+			bannedSet.emplace(word);
+		}
+		int maxFrequency = 0;
+		std::unordered_map<std::string, int> frequencies;
+		std::string word;
+		int length = paragraph.size();
+		for (int i = 0; i <= length; ++i) {
+			if (i < length && isalpha(paragraph[i])) {
+				word.push_back(tolower(paragraph[i]));
+			}
+			else if (word.size() > 0) {
+				if (!bannedSet.count(word)) {
+					frequencies[word] ++;
+					maxFrequency = std::max(maxFrequency, frequencies[word]);
+				}
+				word = "";
+			}
+		}
+		std::string mostCommon = "";
+		for (auto& [word, frequency] : frequencies) {
+			if (frequency == maxFrequency) {
+				mostCommon = word;
+				break;
+			}
+		}
+		return mostCommon;
+	}
+	std::vector<int> shortestToChar(std::string s, char c) {
+		int length = s.size();
+		std::vector<int> lst_rt(length, INT_MAX);
+		int latest_ind = -length;
+		for (int i = 0; i < length; ++i) {
+			if (s[i] == c) {
+				latest_ind = i;
+			}
+			lst_rt[i] = i - latest_ind;
+		}
+		latest_ind = 2*length;
+		for (int i = length - 1; i > -1; --i) {
+			if (s[i] == c) {
+				latest_ind = i;
+			}
+			lst_rt[i] = std::min(lst_rt[i], latest_ind - i);
+		}
+		return lst_rt;
+	}
+	std::string toGoatLatin(std::string sentence) {
+		std::string rt_st = "";
+		std::multiset<char> ord_char{ 'a', 'e', 'i', 'o', 'u' };
+		bool flag_word_start = true;
+		int word_count = 1;
+		std::string word = "";
+		int word_type = 0;// 0:None 1:yuanyin 2:fuyin
+		for (auto& chr : sentence) {
+			if (flag_word_start) {
+				// 单词开头
+				flag_word_start = false;
+				if (ord_char.count(tolower(chr))) {
+					word_type = 1;
+				}
+				else {
+					word_type = 2;
+				}
+				word += chr;
+			}
+			else {
+				if (chr == ' ') {
+					//单词结尾
+					if (word_type == 1) {
+						word += "ma";
+					}
+					else if (word_type == 2) {
+						word = word.substr(1, word.size() - 1) + word[0] + "ma";
+					}
+					for (int j = 1; j <= word_count; ++j) {
+						word += 'a';
+					}
+					rt_st += word + " ";
+
+					// 重置标记
+					word_count++;
+					flag_word_start = true;
+					word = "";
+					word_type = 0;
+				}
+				else {
+					word += chr;
+				}
+			}
+		}
+		// 结尾单词
+		if (word_type == 1) {
+			word += "ma";
+		}
+		else if (word_type == 2) {
+			word = word.substr(1, word.size() - 1) + word[0] + "ma";
+		}
+		for (int j = 1; j <= word_count; ++j) {
+			word += 'a';
+		}
+		rt_st += word + " ";
+
+		return rt_st;
+	}
+
+	int strStr1(std::string haystack, std::string needle) {
+		int n = haystack.size(), m = needle.size();
+		if (m == 0) {
+			return 0;
+		}
+		std::vector<int> pi(m);
+		for (int i = 1, j = 0; i < m; ++i) {
+			while (j > 0 && needle[j] != needle[i]) {
+				j = pi[j - 1];
+			}
+			if (needle[j] == needle[i]) {
+				j++;
+			}
+			pi[i] = j;
+		}
+		for (int i = 0, j = 0; i < n; ++i) {
+			while (j > 0 && needle[j] != haystack[i]) {
+				j = pi[j - 1];
+			}
+			if (haystack[i] == needle[j]) {
+				j++;
+			}
+			if (j == m) {
+				return i - m + 1;
+			}
+		}
+		return -1;
+	}
+	int smallestRangeI(std::vector<int>& nums, int k) {
+		int max_num = *std::max_element(nums.begin(),nums.end());
+		int min_num = *std::min_element(nums.begin(), nums.end());
+		int interval = max_num - min_num;
+		if (interval > 2*k) {
+			return interval - 2 * k;
+		}
+		else {
+			return 0;
+		}
+	}
+	std::vector<int> getAllElements(TreeNode* root1, TreeNode* root2) {
+		std::vector<int> lst_num;
+		std::vector<TreeNode*> dfs_lst;
+		if (root1 != NULL) {
+			dfs_lst.emplace_back(root1);
+		}
+		if (root2 != NULL) {
+			dfs_lst.emplace_back(root2);
+		}
+		while (!dfs_lst.empty()) {
+			auto node = dfs_lst[dfs_lst.size()-1];
+			lst_num.emplace_back(node->val);
+			if (node->left != NULL) {
+				dfs_lst.emplace_back(node->left);
+			}
+			if (node->right != NULL) {
+				dfs_lst.emplace_back(node->right);
+			}
+			dfs_lst.pop_back();
+		}
+		std::sort(lst_num.begin(), lst_num.end());
+		return lst_num;
+	}
+
 };
 int Solution::a = 0;
 
 void Solution::Test() {
-	//std::string st = "[['X','.','.','X'],['.','.','.','X'],['.','.','.','X']]";
-	//std::cin >> st;
+	//std::string st = "[[7,9],[10,7],[6,9],[10,4],[7,5],[7,10]]";
+	////std::cin >> st;
 	//for (auto& chr : st) {
 	//	if (chr == '[') {
 	//		chr = '{';
@@ -1246,11 +1553,22 @@ void Solution::Test() {
 	//		chr = '\'';
 	//	}
 	//}
+
 	//std::srand(1);
 	//int i = rand() % 10 + 1;
+	std::deque<int> lst = { 1,2,3,4,5,3000,3001 };
+	int t = 3003;
+	lst.emplace_back(t);
+	while (lst[0] < t - 3000) {
+		lst.pop_front();
+	}
 
-	std::vector<std::string > timePoints{ "23:59", "00:00" };
-	printf("%d\n", this->findMinDifference(timePoints));
+
+	std::multiset<int> pq;
+	
+	std::vector<std::vector<int>> properties = { {7,9},{10,7},{6,9},{10,4},{7,5},{7,10} };
+	printf("%d %d\n", this->numberOfWeakCharacters(properties),2);
+
 };
 
 
@@ -1260,8 +1578,6 @@ public:
 	int value;
 	Node* next;
 	Node() {}
-
-
 
 	Node* reverse(Node* node) {
 		if (node == NULL || node->next == NULL) {
